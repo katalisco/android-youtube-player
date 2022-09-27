@@ -2,8 +2,10 @@
 <html>
     <style type="text/css">
         html, body {
-            height: 100%;
-            width: 100%;
+            height: 1000%;
+            width: 1000%;
+            transform: scale(0.1);
+            transform-origin: left top;
             margin: 0;
             padding: 0;
             background-color: #000000;
@@ -97,6 +99,8 @@
                 var videoDuration = player.getDuration();
 
                 YouTubePlayerBridge.sendVideoDuration(videoDuration);
+                var qualityOptions = JSON.stringify(player.getAvailableQualityLevels());
+                YouTubePlayerBridge.sendVideoQualities(qualityOptions);
             }
 
             // This method checks if the player is playing a playlist.
@@ -157,9 +161,30 @@
         function setVolume(volumePercent) {
             player.setVolume(volumePercent);
         }
-
-        function setPlaybackRate(playbackRate) {
-            player.setPlaybackRate(playbackRate);
+            
+        function setQuality(playbackQuality) {
+            setPlaybackQuality(playbackQuality);
+        }
+            
+        function setPlaybackQuality(playbackQuality) {
+            if (playbackQuality == "auto") {
+                //this will make quality auto
+                localStorage.removeItem("yt-player-quality");
+            } else {
+                var now = Date.now();
+                //this will set quality of your choice and it will be saved and be default for every video until expires:)
+                window.localStorage.setItem("yt-player-quality", JSON.stringify({
+                    data: playbackQuality,
+                    creation: now,
+                    expiration: now + 2592000000
+                }));
+            }
+            //after you set value you have to reload the player to see the effect.
+            //so this method reloads the video where you left it so it is kinda seemless
+            if (player) {
+                var currentTime = player.getCurrentTime();
+                player.loadVideoById(player.getVideoData().video_id, currentTime, playbackQuality);
+            }
         }
 
     </script>
