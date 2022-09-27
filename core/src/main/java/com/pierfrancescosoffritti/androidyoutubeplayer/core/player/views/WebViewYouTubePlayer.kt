@@ -10,6 +10,7 @@ import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
+
 import com.pierfrancescosoffritti.androidyoutubeplayer.R
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -30,6 +31,7 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
 
     private val youTubePlayerListeners = HashSet<YouTubePlayerListener>()
     private val mainThreadHandler: Handler = Handler(Looper.getMainLooper())
+    private val youtubePlayerBridge: YouTubePlayerBridge = YouTubePlayerBridge(this)
 
     internal var isBackgroundPlaybackEnabled = false
 
@@ -69,7 +71,12 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
     override fun setVolume(volumePercent: Int) {
         require(!(volumePercent < 0 || volumePercent > 100)) { "Volume must be between 0 and 100" }
 
+
         mainThreadHandler.post { loadUrl("javascript:setVolume($volumePercent)") }
+    }
+    
+    override fun setQuality(playbackQuality: String) {
+        mainThreadHandler.post { loadUrl("javascript:setPlaybackQuality('$playbackQuality')") }
     }
 
     override fun seekTo(time: Float) {
@@ -97,14 +104,18 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
     override fun removeListener(listener: YouTubePlayerListener): Boolean {
         return youTubePlayerListeners.remove(listener)
     }
+    
+    override fun getAvailableQualities(): String {
+        return youtubePlayerBridge.getVideoQualities()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView(playerOptions: IFramePlayerOptions) {
         settings.javaScriptEnabled = true
         settings.mediaPlaybackRequiresUserGesture = false
         settings.cacheMode = WebSettings.LOAD_DEFAULT
-
-        addJavascriptInterface(YouTubePlayerBridge(this), "YouTubePlayerBridge")
+        settings.domStorageEnabled = true
+        addJavascriptInterface(youtubePlayerBridge, "YouTubePlayerBridge")
 
         val htmlPage = Utils
                 .readHTMLFromUTF8File(resources.openRawResource(R.raw.ayp_youtube_player))
