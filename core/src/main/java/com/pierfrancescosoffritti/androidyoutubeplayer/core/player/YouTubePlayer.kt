@@ -3,7 +3,7 @@ package com.pierfrancescosoffritti.androidyoutubeplayer.core.player
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 
 /**
- * Use this interface to control the playback of YouTube videos and to listen to their events.
+ * Use this interface to control the playback of YouTube videos and to listen to their events.a
  */
 interface YouTubePlayer {
     /**
