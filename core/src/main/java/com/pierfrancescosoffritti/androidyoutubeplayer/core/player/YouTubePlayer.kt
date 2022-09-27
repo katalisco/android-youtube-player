@@ -22,6 +22,9 @@ interface YouTubePlayer {
 
     fun play()
     fun pause()
+    
+    fun mute()
+    fun unMute()
 
     /**
      * @param volumePercent Integer between 0 and 100
@@ -32,6 +35,8 @@ interface YouTubePlayer {
     
     fun getAvailableQualities(): String
         
+    fun setPlaybackRate(playbackRate: PlayerConstants.PlaybackRate)
+
     /**
      *
      * @param time The absolute time in seconds to seek to
