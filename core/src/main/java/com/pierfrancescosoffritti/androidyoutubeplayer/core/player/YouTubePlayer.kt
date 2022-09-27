@@ -23,21 +23,20 @@ interface YouTubePlayer {
     fun play()
     fun pause()
 
-    fun mute()
-    fun unMute()
-
     /**
      * @param volumePercent Integer between 0 and 100
      */
     fun setVolume(volumePercent: Int)
-
+    
+    fun setQuality(playbackQuality: String)
+    
+    fun getAvailableQualities(): String
+        
     /**
      *
      * @param time The absolute time in seconds to seek to
      */
     fun seekTo(time: Float)
-
-    fun setPlaybackRate(playbackRate: PlayerConstants.PlaybackRate)
 
     fun addListener(listener: YouTubePlayerListener): Boolean
     fun removeListener(listener: YouTubePlayerListener): Boolean
